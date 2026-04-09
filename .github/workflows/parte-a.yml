@@ -1,4 +1,4 @@
-name: Parte A CI
+name: CI Parte A
 
 on:
   push:
@@ -26,28 +26,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Show Docker versions
+      - name: Mostrar versiones de Docker
         run: |
           docker --version
           docker compose version
 
-      - name: Build and start gRPC server
+      - name: Construir y arrancar el servidor gRPC
         run: docker compose up -d --build server
 
-      - name: Run gRPC client sync
+      - name: Ejecutar sincronización del cliente gRPC
         run: docker compose run --rm client
 
-      - name: Run load test
+      - name: Ejecutar prueba de carga
         run: |
           docker compose --profile load run --rm \
             -e LOAD_USERS=50 \
             -e LOAD_REQUESTS_PER_USER=100 \
             load-tester
 
-      - name: Print server logs
+      - name: Mostrar logs del servidor
         if: always()
         run: docker compose logs --no-color --tail=200 server
 
-      - name: Tear down containers and volumes
+      - name: Detener contenedores y volúmenes
         if: always()
         run: docker compose down -v

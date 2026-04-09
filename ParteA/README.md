@@ -1,20 +1,20 @@
-# Parte A - Cliente/Servidor gRPC con Docker
+# Parte A - Cliente y servidor gRPC con Docker
 
-Este proyecto implementa una arquitectura cliente-servidor usando RPC con gRPC.
+Este proyecto implementa una solución cliente-servidor con RPC usando gRPC.
 
-## Componentes
+## Qué incluye
 
-- **Servidor gRPC**: consulta su base de datos SQLite y retorna la lista de estudiantes.
-- **Cliente gRPC**: solicita estudiantes al servidor y los inserta/actualiza en su base SQLite.
-- **Load tester**: ejecuta pruebas de carga concurrentes sobre el endpoint gRPC del servidor.
+- **Servidor gRPC**: consulta su base de datos SQLite y devuelve la lista de estudiantes.
+- **Cliente gRPC**: pide los estudiantes al servidor y los guarda en su propia base SQLite.
+- **Prueba de carga**: ejecuta muchas peticiones en paralelo para medir el servidor.
 
 ## Estructura
 
 - `proto/students.proto`: contrato del servicio gRPC.
-- `server/`: servicio servidor + BD SQLite de origen.
-- `client/`: aplicación cliente + BD SQLite destino.
+- `server/`: servidor y base de datos SQLite de origen.
+- `client/`: cliente y base de datos SQLite destino.
 - `load_test/`: herramienta de prueba de carga.
-- `docker-compose.yml`: orquestación de servicios.
+- `docker-compose.yml`: despliegue de los servicios.
 
 ## Levantar servidor y cliente
 
@@ -27,7 +27,7 @@ docker compose up --build server client
 Salida esperada:
 
 - El servidor inicia en el puerto `50051`.
-- El cliente se conecta al servidor, obtiene estudiantes y los guarda en su BD.
+- El cliente se conecta al servidor, obtiene estudiantes y los guarda en su base de datos.
 
 ## Ejecutar prueba de carga
 
@@ -35,7 +35,7 @@ Salida esperada:
 docker compose --profile load run --rm load-tester
 ```
 
-Variables de entorno disponibles para ajustar carga:
+Variables de entorno para ajustar la carga:
 
 - `LOAD_USERS` (por defecto: `100`)
 - `LOAD_REQUESTS_PER_USER` (por defecto: `200`)
@@ -50,7 +50,7 @@ docker compose --profile load run --rm \
   load-tester
 ```
 
-## Verificar datos de la BD del cliente
+## Verificar datos de la base del cliente
 
 ```bash
 docker compose run --rm client python -c "import sqlite3; c=sqlite3.connect('/data/client.db'); print(c.execute('select * from students').fetchall())"

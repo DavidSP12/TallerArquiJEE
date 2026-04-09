@@ -15,8 +15,8 @@ RUN python -m grpc_tools.protoc \
     /protos/students.proto
 
 ENV GRPC_SERVER=server:50051
-ENV LOAD_USERS=50
-ENV LOAD_REQUESTS_PER_USER=100
+ENV LOAD_USERS=80
+ENV LOAD_REQUESTS_PER_USER=150
 ENV LOAD_TIMEOUT=5
 
 CMD ["python", "load_test.py"]

@@ -22,10 +22,10 @@ def sync_students() -> None:
                 response = stub.ListStudents(students_pb2.Empty(), timeout=10)
 
             total = upsert_students(response.students)
-            print(f"Synchronization completed. {total} students stored in client database.")
+            print(f"Sincronización completada. Se guardaron {total} estudiantes en la base del cliente.")
             return
         except grpc.RpcError as exc:
-            print(f"Attempt {attempt}/{retries} failed: {exc}")
+            print(f"Intento {attempt}/{retries} fallido: {exc}")
             if attempt == retries:
                 raise
             time.sleep(retry_interval)

@@ -15,6 +15,8 @@ def worker(target: str, requests_count: int, timeout: float):
     ok = 0
     failed = 0
 
+    # Cada worker usa un canal propio y manda sus requests de forma secuencial.
+    # El paralelismo total lo da el ThreadPoolExecutor con varios workers a la vez.
     with grpc.insecure_channel(target) as channel:
         stub = students_pb2_grpc.StudentServiceStub(channel)
 
@@ -57,8 +59,8 @@ def main() -> None:
     requests_per_user = int(os.getenv("LOAD_REQUESTS_PER_USER", "100"))
     timeout = float(os.getenv("LOAD_TIMEOUT", "5"))
 
-    print(f"Starting load test against {target}")
-    print(f"Users: {users} | Requests per user: {requests_per_user}")
+    print(f"Iniciando la prueba de carga contra {target}")
+    print(f"Usuarios: {users} | Solicitudes por usuario: {requests_per_user}")
 
     started = time.perf_counter()
     all_latencies = []
@@ -80,21 +82,21 @@ def main() -> None:
     duration = time.perf_counter() - started
     total_requests = ok_total + failed_total
 
-    print("=== Load Test Result ===")
-    print(f"Duration (s): {duration:.3f}")
-    print(f"Total requests: {total_requests}")
-    print(f"Successful: {ok_total}")
-    print(f"Failed: {failed_total}")
-    print(f"Success rate (%): {(ok_total / total_requests * 100) if total_requests else 0:.2f}")
+    print("=== Resultado de la prueba de carga ===")
+    print(f"Duración (s): {duration:.3f}")
+    print(f"Total de solicitudes: {total_requests}")
+    print(f"Exitosas: {ok_total}")
+    print(f"Fallidas: {failed_total}")
+    print(f"Tasa de éxito (%): {(ok_total / total_requests * 100) if total_requests else 0:.2f}")
     print(f"RPS: {(total_requests / duration) if duration else 0:.2f}")
 
     if all_latencies:
-        print(f"Latency min (ms): {min(all_latencies):.2f}")
-        print(f"Latency avg (ms): {statistics.mean(all_latencies):.2f}")
-        print(f"Latency p50 (ms): {percentile(all_latencies, 0.50):.2f}")
-        print(f"Latency p95 (ms): {percentile(all_latencies, 0.95):.2f}")
-        print(f"Latency p99 (ms): {percentile(all_latencies, 0.99):.2f}")
-        print(f"Latency max (ms): {max(all_latencies):.2f}")
+        print(f"Latencia mínima (ms): {min(all_latencies):.2f}")
+        print(f"Latencia promedio (ms): {statistics.mean(all_latencies):.2f}")
+        print(f"Latencia p50 (ms): {percentile(all_latencies, 0.50):.2f}")
+        print(f"Latencia p95 (ms): {percentile(all_latencies, 0.95):.2f}")
+        print(f"Latencia p99 (ms): {percentile(all_latencies, 0.99):.2f}")
+        print(f"Latencia máxima (ms): {max(all_latencies):.2f}")
 
 
 if __name__ == "__main__":

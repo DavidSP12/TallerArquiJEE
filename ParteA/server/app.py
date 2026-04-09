@@ -10,6 +10,7 @@ from db import init_db, fetch_students
 
 class StudentService(students_pb2_grpc.StudentServiceServicer):
     def ListStudents(self, request, context):
+        # Se consulta la base y se arma la respuesta gRPC con los datos obtenidos.
         students = fetch_students()
         response = students_pb2.StudentList()
 
@@ -36,7 +37,7 @@ def serve() -> None:
     server.add_insecure_port(f"[::]:{port}")
     server.start()
 
-    print(f"gRPC server listening on port {port}")
+    print(f"Servidor gRPC escuchando en el puerto {port}")
     server.wait_for_termination()
 
 
