@@ -34,10 +34,10 @@ jobs:
           cache: maven
 
       - name: Dar permisos al wrapper de Maven
-        run: chmod +x demo/mvnw
+        run: cd demo && chmod +x mvnw
 
       - name: Compilar la Parte B
-        run: ./demo/mvnw -B -ntp -f pom.xml clean package
+        run: cd demo && ./mvnw -B -ntp -f ../pom.xml clean package
 
       - name: Levantar servicios de Parte B
         run: docker compose up -d
