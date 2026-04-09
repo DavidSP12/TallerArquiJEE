@@ -34,10 +34,38 @@ jobs:
           cache: maven
 
       - name: Dar permisos al wrapper de Maven
-        run: chmod +x mvnw
+        run: chmod +x demo/mvnw
 
       - name: Compilar la Parte B
-        run: ./mvnw -B -ntp clean package
+        run: ./demo/mvnw -B -ntp -f pom.xml clean package
+
+      - name: Levantar servicios de Parte B
+        run: docker compose up -d
+
+      - name: Esperar despliegue en WildFly
+        run: |
+          for i in $(seq 1 60); do
+            if docker compose logs --no-color wildfly-app | grep -q 'WFLYSRV0010: Deployed "demo.war"'; then
+              echo "Aplicación desplegada correctamente en WildFly"
+              exit 0
+            fi
+            echo "Esperando despliegue... intento ${i}/60"
+            sleep 5
+          done
+
+          echo "No se confirmó el despliegue de demo.war en el tiempo esperado"
+          docker compose logs --no-color wildfly-app
+          exit 1
+
+      - name: Probar endpoint REST
+        run: |
+          codigo=$(curl -s -o /tmp/respuesta.txt -w "%{http_code}" http://localhost:8080/demo/api/productos)
+          echo "Código HTTP: ${codigo}"
+          cat /tmp/respuesta.txt
+          if [ "${codigo}" -ge 500 ]; then
+            echo "El endpoint respondió con error de servidor"
+            exit 1
+          fi
 
       - name: Guardar WAR generado
         uses: actions/upload-artifact@v4
@@ -45,3 +73,7 @@ jobs:
           name: parte-b-war
           path: ParteB/demo/target/demo.war
           if-no-files-found: error
+
+      - name: Detener contenedores
+        if: always()
+        run: docker compose down -v
