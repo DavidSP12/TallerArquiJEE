@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  db-servidor:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: appdb
+    ports:
+      - "5432:5432"
+
+  wildfly-app:
+    image: quay.io/wildfly/wildfly:latest
+    depends_on:
+      - db-servidor
+    ports:
+      - "8080:8080" # Aplicación y RMI
+      - "9990:9990" # Admin
+    environment:
+      # Configuramos Wildfly para que exponga el puerto RMI a conexiones externas (tu PC)
+      - WILDFLY_BIND_OPTS=-b 0.0.0.0 -bmanagement 0.0.0.0
+    volumes:
+      - ./demo/target/demo.war:/opt/jboss/wildfly/standalone/deployments/demo.war
