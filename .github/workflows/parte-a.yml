@@ -40,8 +40,8 @@ jobs:
       - name: Ejecutar prueba de carga
         run: |
           docker compose --profile load run --rm \
-            -e LOAD_USERS=50 \
-            -e LOAD_REQUESTS_PER_USER=100 \
+            -e LOAD_USERS=80 \
+            -e LOAD_REQUESTS_PER_USER=150 \
             load-tester
 
       - name: Mostrar logs del servidor

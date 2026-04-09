@@ -35,8 +35,8 @@ services:
     container_name: grpc-student-load-tester
     environment:
       - GRPC_SERVER=server:50051
-      - LOAD_USERS=100
-      - LOAD_REQUESTS_PER_USER=200
+      - LOAD_USERS=80
+      - LOAD_REQUESTS_PER_USER=150
       - LOAD_TIMEOUT=5
     depends_on:
       - server
