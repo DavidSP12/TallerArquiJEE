@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package students;
+
+service StudentService {
+  rpc ListStudents(Empty) returns (StudentList);
+}
+
+message Empty {}
+
+message Student {
+  int32 id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string major = 5;
+}
+
+message StudentList {
+  repeated Student students = 1;
+}

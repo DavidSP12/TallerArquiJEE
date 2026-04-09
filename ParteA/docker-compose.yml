@@ -1,0 +1,48 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: grpc-student-server
+    environment:
+      - SERVER_DB_PATH=/data/server.db
+      - GRPC_PORT=50051
+      - GRPC_MAX_WORKERS=20
+    ports:
+      - "50051:50051"
+    volumes:
+      - server_data:/data
+
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    container_name: grpc-student-client
+    environment:
+      - CLIENT_DB_PATH=/data/client.db
+      - GRPC_SERVER=server:50051
+      - CLIENT_RETRIES=30
+      - CLIENT_RETRY_INTERVAL=1.5
+    volumes:
+      - client_data:/data
+    depends_on:
+      - server
+
+  load-tester:
+    build:
+      context: .
+      dockerfile: load_test/Dockerfile
+    container_name: grpc-student-load-tester
+    environment:
+      - GRPC_SERVER=server:50051
+      - LOAD_USERS=100
+      - LOAD_REQUESTS_PER_USER=200
+      - LOAD_TIMEOUT=5
+    depends_on:
+      - server
+    profiles:
+      - load
+
+volumes:
+  server_data:
+  client_data:
