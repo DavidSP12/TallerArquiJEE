@@ -55,8 +55,8 @@ def percentile(values, p: float) -> float:
 
 def main() -> None:
     target = os.getenv("GRPC_SERVER", "server:50051")
-    users = int(os.getenv("LOAD_USERS", "50"))
-    requests_per_user = int(os.getenv("LOAD_REQUESTS_PER_USER", "100"))
+    users = int(os.getenv("LOAD_USERS", "80"))
+    requests_per_user = int(os.getenv("LOAD_REQUESTS_PER_USER", "150"))
     timeout = float(os.getenv("LOAD_TIMEOUT", "5"))
 
     print(f"Iniciando la prueba de carga contra {target}")
